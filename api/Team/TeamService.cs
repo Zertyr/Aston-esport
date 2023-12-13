@@ -1,4 +1,7 @@
-﻿using astonesport.Models;
+﻿using aston_esport.Models;
+using astonesport.api.Team.Models;
+using astonesport.Models;
+using MongoDB.Driver;
 
 namespace aston_esport.Services;
 public partial class TeamService
@@ -53,35 +56,36 @@ public partial class TeamService
     // TODO controller
     public Team AddRoster(string id, Roster roster){
         var team = FindOne(id);
-        team.Rosters.push(roster);
+        team.Rosters.Add(roster);
         return Update(id, team);
     }
 
     // TODO controller
     public Team RemoveRoster(string id, Roster roster){
         var team = FindOne(id);
-        roster = team.Rosters.Contains(x => x.id == roster.id);
+        roster = team.Rosters.Where(x => x.Id == roster.Id).First();
         team.Rosters.Remove(roster);
         return Update(id, team);
     }
 
     public Team AddRosterPlayer(string id, string rosterId, Player player){
         var team = FindOne(id);
-        roster = team.Rosters.Contains(x => x.id == roster.id);
-        team.Rosters.Remove(roster);
+        var roster = team.Rosters.Where(x => x.Id == rosterId).First();
+        if (player != null)
+        {
+            roster.Players.Add(player);
+        }
 
-        roster.push(player);
-        team.Rosters.push(roster);
         return Update(id, team);
     }
 
     public Team RemoveRosterPlayer(string id, string rosterId, string playerId){
         var team = FindOne(id);
-        roster = team.Rosters.Contains(x => x.id == playerId);
+        var roster = team.Rosters.Where(x => x.Id == rosterId).First();
+        var player = roster.Players.Where(x => x.Id == playerId).First();
         team.Rosters.Remove(roster);
-        roster.Remove(player);
-
-        team.Rosters.push(roster);
+        roster.Players.Remove(player);
+        team.Rosters.Add(roster);
         return Update(id, team);
     }
 }

@@ -1,5 +1,6 @@
-
-
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using astonesport.Models;
 /// <summary>
 /// Représente les informations d'un roster
 /// </summary>
