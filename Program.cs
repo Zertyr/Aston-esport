@@ -1,11 +1,9 @@
+using aston_esport.Services;
 using astonesport.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using Services;
 
 var builder = WebApplication.CreateBuilder(args);
-var db = new MongoDBService();
-db.Init();
 
 // Add services to the container.
 

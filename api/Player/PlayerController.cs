@@ -1,3 +1,4 @@
+using aston_esport.Services;
 using astonesport.Models;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -10,40 +11,46 @@ namespace aston_esport.Controllers;
 [Route("api/[controller]")]
 public class PlayerController : ControllerBase
 {
-    public readonly PlayerService service; 
-    [ActivatorUtilitiesConstructor] public PlayerController( MongoDBService db){
-        this.service = new PlayerService(db);
+    public readonly PlayerService _service; 
+    [ActivatorUtilitiesConstructor] 
+    public PlayerController( PlayerService playerService){
+        this._service = playerService;
     }
 
     [HttpGet("getPlayer/{id}")]
-    public IEnumerable<Player> Get([FromRoute(Name = "id")] int id)
+    public Player Get([FromRoute(Name = "id")] string id)
     {
-        this.service.FindOne(id)
+        return this._service.FindOne(id);
     }
 
     [HttpPost(Name = "getPlayers")]
-    public Player GetMany([FromBody] string ids)
+    public IEnumerable<Player> GetMany([FromBody] string[] ids)
     {
-        JsonDocument.Parse(ids);
-        this.service.FindMany(ids);
+       return this._service.FindMany(ids);
     }
 
     [HttpPost(Name = "postPlayer")]
-    public Player Create([FromBody] string player)
+    public Player Create([FromBody] Player player)
     {
-        JsonDocument.Parse(player);
-        this.service.Create(player);
+        return this._service.Create(player);
     }
 
-    [HttpPatch(Name = "patchPlayer")]
-    public Player Update([FromBody] string player)
+    [HttpPatch(Name = "patchPlayer/{id}")]
+    public Player Update([FromRoute(Name = "id")] string id, [FromBody] Player player)
     {
-        this.service.Update(player);
+        return this._service.Update(id,player);
     }
 
     [HttpDelete("deletePlayer/{id}")]
-    public bool Delete([FromRoute(Name = "id")] int id)
+    public bool Delete([FromRoute(Name = "id")] string id)
     {
-        this.service.Delete(id);
+        if (this._service.Delete(id))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        };
     }
 }

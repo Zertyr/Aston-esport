@@ -1,41 +1,52 @@
-﻿using astonesport.Models;
+﻿using aston_esport.Models;
+using astonesport.Models;
+using MongoDB.Driver;
 
 namespace aston_esport.Services;
 public partial class PlayerService
 {
-    private IMongoCollection<> repository;
-    [ActivatorUtilitiesConstructor] public PlayerService( MongoDBService db){
-        this._repository = db._player
+    private IMongoCollection<Player> repository;
+    [ActivatorUtilitiesConstructor] 
+    public PlayerService(PlayerStoreDatabaseSettings playerStoreDatabaseSettings, IMongoClient mongoClient)
+    {
+        var db = mongoClient.GetDatabase(playerStoreDatabaseSettings.DatabaseName);
+        repository = db.GetCollection<Player>(playerStoreDatabaseSettings.CollectionName);
     }
 
     public Player Create(Player player)
     {
+        repository.InsertOne(player);
         return player;
     }
 
-    public Player Update(int id, Player player)
+    public Player Update(string id, Player player)
     {
-        return this.repository.Update(id, player);
+        this.repository.ReplaceOne(x => x.Id == id,player);
+        return player;
     }
 
-    public bool Delete(int id)
+    public bool Delete(string id)
     {
-        return this.repository.Delete(id);
+        this.repository.DeleteOne(id);
+        return true;
     }
 
-    public Player FindOne(int id)
+    public List<Player> Find()
     {
-        return this.repository.FindById(id)
-
+        var player = repository.Find(x => true).ToList();
+        return player;
     }
 
-   public Player[] FindMany(int[] ids)
+
+    public Player FindOne(string id)
     {
-        Player[] players;
-        for (int i = 0; i < ids.Length; i++)
-        {
-            players.push(this.repository.FindOne(ids[i]));
-        }
+        var player = repository.Find(x => x.Id == id).First();
+        return player;
+    }
+
+   public List<Player> FindMany(string[] ids)
+    {
+        var players = repository.Find(x => ids.Contains(x.Id)).ToList();
         return players;
     }
 }
