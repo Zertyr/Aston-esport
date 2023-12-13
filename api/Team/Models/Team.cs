@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Text.Json.Serialization;
 
-namespace astonesport.Models;
+namespace astonesport.api.Team.Models;
 
 /// <summary>
 /// Représente les informations d'une équipe
@@ -32,14 +32,14 @@ public class Team
     public string Name { get; set; }
 
     /// <summary>
-    /// Obtient ou définit le nom d'une équipe
+    /// Obtient ou définit les regions
     /// </summary>
-    [BsonElement("items")]
-    [JsonPropertyName("items")]
-    public List<string> AreaIds { get; set; }
+    [BsonElement("areas")]
+    [JsonPropertyName("areas")]
+    public List<string> Areas { get; set; }
 
     /// <summary>
-    /// Obtient ou définit la liste des joueurs
+    /// Obtient ou définit la liste des rosters
     /// </summary>
     [BsonElement("rosters")]
     public List<Roster> Rosters { get; set; }
@@ -51,17 +51,9 @@ public class Team
     public List<Player> Substitute { get; set; }
 
     /// <summary>
-    /// Obtient ou définit le nom d'une équipe
+    /// Obtient ou définit la liste des coach
     /// </summary>
     [BsonElement("coaches")]
     public List<Person> Coaches { get; set; }
-
-    public class Roster
-    {
-        /// <summary>
-        /// Obtient ou définit la liste des remplaçants
-        /// </summary>
-        public Player[] Players { get; set; }
-    }
 }
 
